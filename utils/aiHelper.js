@@ -43,8 +43,14 @@ const getAiChatResponse = async (channelId, userId, prompt) => {
             });
         }
 
+        // API'ye göndermeden önce geçmişi _id alanlarından temizle
+        const sanitizedHistory = chatSession.history.map(h => ({
+            role: h.role,
+            parts: h.parts.map(p => ({ text: p.text }))
+        }));
+
         const chat = generativeModel.startChat({
-            history: chatSession.history
+            history: sanitizedHistory
         });
 
         const result = await chat.sendMessage(prompt);
